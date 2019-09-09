@@ -1,11 +1,16 @@
-package com.szilardmakai.notetakingappkotlin.database
+package com.szilardmakai.notetakingappkotlin.notelist
 
 import android.app.Application
 import androidx.lifecycle.AndroidViewModel
+import com.szilardmakai.notetakingappkotlin.database.Note
+import com.szilardmakai.notetakingappkotlin.database.NoteDatabase
 import com.szilardmakai.notetakingappkotlin.repository.NoteRepository
-import kotlinx.coroutines.*
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.SupervisorJob
+import kotlinx.coroutines.launch
 
-class NoteListViewMode(app: Application): AndroidViewModel(app) {
+class NoteListViewModel(app: Application): AndroidViewModel(app) {
 
     private val viewModelJob = SupervisorJob()
 

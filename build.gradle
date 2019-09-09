@@ -8,7 +8,7 @@ buildscript {
         coroutine_version = '1.0.0'
         paging_version = '1.0.1'
         gradleVersion = '3.5.0'
-        navigationVersion = '1.0.0-alpha08'
+        navigationVersion = '1.0.0'
         dataBindingCompilerVersion = gradleVersion // Always need to be the same.
     }
     repositories {
