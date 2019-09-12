@@ -14,6 +14,11 @@ class NoteAdapter(val clickListener: NoteClickListener) :
     PagedListAdapter<Note, NoteAdapter.NoteViewHolder>(
         NoteDiffCallback()
     ) {
+    var notes: List<Note> = emptyList()
+        set(value) {
+            field = value
+            notifyDataSetChanged()
+        }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): NoteViewHolder {
         val withDataBinding: NoteListItemBinding = DataBindingUtil.inflate(
@@ -24,9 +29,17 @@ class NoteAdapter(val clickListener: NoteClickListener) :
     }
 
     override fun onBindViewHolder(holder: NoteViewHolder, position: Int) {
-        holder.bind(getItem(position)!!, clickListener)
+        holder.bind(notes[position], clickListener)
     }
 
+    override fun getItemCount(): Int {
+        return notes.size
+    }
+
+
+    fun noteAtPosition(position: Int): Note {
+        return notes[position]
+    }
 
     class NoteViewHolder(val binding: NoteListItemBinding) : RecyclerView.ViewHolder(binding.root) {
         fun bind(note: Note, clickListener: NoteClickListener) {
@@ -56,6 +69,6 @@ class NoteDiffCallback : DiffUtil.ItemCallback<Note>() {
     }
 }
 
-class NoteClickListener(val clickListener: (noteContent: String) -> Unit) {
-    fun onClick(note: Note) = clickListener(note.content)
+class NoteClickListener(val clickListener: (noteId: Long) -> Unit) {
+    fun onClick(note: Note) = clickListener(note.noteId)
 }

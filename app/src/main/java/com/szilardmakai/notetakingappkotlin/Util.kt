@@ -5,7 +5,6 @@ import java.util.*
 
 
 const val MONTH_FORMAT = "MMM"
-const val TIME_FORMAT_FROM_DATE = "hh:mm"
 
 class Util {
     companion object {
@@ -13,15 +12,22 @@ class Util {
             val calendar = Calendar.getInstance()
             calendar.timeInMillis = time
             val year = calendar.get(Calendar.YEAR)
-            val month = SimpleDateFormat(MONTH_FORMAT).format(calendar.get(Calendar.MONTH))
+            val month = SimpleDateFormat(MONTH_FORMAT, Locale.getDefault()).format(calendar.get(Calendar.MONTH))
             val day = calendar.get(Calendar.DAY_OF_MONTH)
-            val hour = calendar.get(Calendar.HOUR_OF_DAY)
-            val minute = calendar.get(Calendar.MINUTE)
-            var second = calendar.get(Calendar.SECOND).toString()
-            if (second.length < 2) {
-                second = "0$second"
+            val hour = convertToDoubleDigit(calendar.get(Calendar.HOUR_OF_DAY).toString())
+            val minute = convertToDoubleDigit(calendar.get(Calendar.MINUTE).toString())
+            val second = convertToDoubleDigit(calendar.get(Calendar.SECOND).toString())
+
+            return "$hour:$minute:$second  $day $month $year"
+        }
+
+
+        private fun convertToDoubleDigit(string: String): String {
+            var newString = string
+            if (string.length < 2) {
+                newString = "0$string"
             }
-            return "$hour:$minute:$second $day $month $year"
+            return newString
         }
     }
 }

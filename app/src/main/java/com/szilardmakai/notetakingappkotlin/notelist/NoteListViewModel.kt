@@ -10,7 +10,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.launch
 
-class NoteListViewModel(app: Application): AndroidViewModel(app) {
+class NoteListViewModel(app: Application) : AndroidViewModel(app) {
 
     private val viewModelJob = SupervisorJob()
 
@@ -21,18 +21,6 @@ class NoteListViewModel(app: Application): AndroidViewModel(app) {
     )
 
     val notes = noteRepository.noteList
-
-    fun addNote(note: Note) {
-        viewModelScope.launch {
-            noteRepository.addNote(note)
-        }
-    }
-
-    fun updateNote(note: Note) {
-        viewModelScope.launch {
-            noteRepository.updateNote(note)
-        }
-    }
 
     fun deleteNote(note: Note) {
         viewModelScope.launch {

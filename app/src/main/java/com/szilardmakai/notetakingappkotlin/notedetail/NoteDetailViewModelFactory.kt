@@ -1,5 +1,20 @@
 package com.szilardmakai.notetakingappkotlin.notedetail
 
-class NoteDetailViewModelFactory {
+import android.app.Application
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.ViewModelProvider
+import com.szilardmakai.remindmekotlin.R
 
+class NoteDetailViewModelFactory(
+    private val app: Application
+//    private val noteId: Long
+) : ViewModelProvider.Factory {
+
+    override fun <T : ViewModel?> create(modelClass: Class<T>): T {
+        if (modelClass.isAssignableFrom(NoteDetailViewModel::class.java)) {
+            return NoteDetailViewModel(app) as T
+        } else {
+            throw IllegalArgumentException(app.getString(R.string.viewModel_error))
+        }
+    }
 }
