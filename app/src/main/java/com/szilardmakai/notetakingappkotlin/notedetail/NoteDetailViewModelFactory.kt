@@ -7,7 +7,6 @@ import com.szilardmakai.remindmekotlin.R
 
 class NoteDetailViewModelFactory(
     private val app: Application
-//    private val noteId: Long
 ) : ViewModelProvider.Factory {
 
     override fun <T : ViewModel?> create(modelClass: Class<T>): T {

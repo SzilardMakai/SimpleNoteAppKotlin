@@ -18,8 +18,8 @@
             android:name="com.szilardmakai.notetakingappkotlin.notedetail.NoteDetailFragment"
             android:label="NoteDetailFragment" >
         <argument
-                android:name="note_id"
-                app:argType="long" />
+                android:name="note"
+                app:argType="com.szilardmakai.notetakingappkotlin.database.Note" />
         <action
                 android:id="@+id/action_noteDetailFragment_to_noteListFragment"
                 app:destination="@id/noteListFragment"

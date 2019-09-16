@@ -6,7 +6,6 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
 import androidx.navigation.findNavController
 import androidx.navigation.fragment.findNavController
@@ -14,10 +13,19 @@ import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.RecyclerView
 import com.szilardmakai.notetakingappkotlin.NoteAdapter
 import com.szilardmakai.notetakingappkotlin.NoteClickListener
+import com.szilardmakai.notetakingappkotlin.database.Note
 import com.szilardmakai.remindmekotlin.R
 import com.szilardmakai.remindmekotlin.databinding.NoteListFragmentBinding
+import io.reactivex.android.schedulers.AndroidSchedulers
+import io.reactivex.disposables.CompositeDisposable
+import io.reactivex.schedulers.Schedulers
 
 class NoteListFragment : Fragment() {
+
+    private val compositeDisposable = CompositeDisposable()
+    private lateinit var viewModelFactory: NoteListViewModelFactory
+    private lateinit var viewModel: NoteListViewModel
+    private lateinit var adapter: NoteAdapter
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -29,38 +37,46 @@ class NoteListFragment : Fragment() {
         )
         val application = requireNotNull(this.activity).application
 
-        val viewModelFactory =
+        viewModelFactory =
             NoteListViewModelFactory(application)
-        val viewModel =
+        viewModel =
             ViewModelProviders.of(this, viewModelFactory).get(NoteListViewModel::class.java)
 
         binding.noteListViewmodel = viewModel
 
-        val adapter =
-            NoteAdapter(NoteClickListener { nightId ->
+        adapter =
+            NoteAdapter(NoteClickListener { night ->
                 findNavController().navigate(
-                    NoteListFragmentDirections.actionNoteListFragmentToNoteDetailFragment(
-                        nightId
-                    )
+                    NoteListFragmentDirections.actionNoteListFragmentToNoteDetailFragment(night)
                 )
             })
 
         binding.contentRecyclerView.adapter = adapter
 
-        viewModel.notes.observe(this, Observer {
-            adapter.notes = it
-        })
 
         createItemTouchHelper(viewModel, adapter).attachToRecyclerView(binding.contentRecyclerView)
 
         binding.fab.setOnClickListener { view ->
             view.findNavController().navigate(
-                NoteListFragmentDirections.actionNoteListFragmentToNoteDetailFragment(0)
+                NoteListFragmentDirections.actionNoteListFragmentToNoteDetailFragment(Note())
             )
         }
         binding.lifecycleOwner = this
 
         return binding.root
+    }
+
+    override fun onStart() {
+        super.onStart()
+        compositeDisposable.add(viewModel.notes
+            .subscribeOn(Schedulers.io())
+            .observeOn(AndroidSchedulers.mainThread())
+            .subscribe{notes -> adapter.notes = notes})
+    }
+
+    override fun onStop() {
+        super.onStop()
+        compositeDisposable.clear()
     }
 
     private fun createItemTouchHelper(
