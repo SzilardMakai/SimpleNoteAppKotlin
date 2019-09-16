@@ -12,7 +12,7 @@ class Util {
             val calendar = Calendar.getInstance()
             calendar.timeInMillis = time
             val year = calendar.get(Calendar.YEAR)
-            val month = SimpleDateFormat(MONTH_FORMAT, Locale.getDefault()).format(calendar.get(Calendar.MONTH))
+            val month = SimpleDateFormat(MONTH_FORMAT, Locale.getDefault()).format(calendar.time)
             val day = calendar.get(Calendar.DAY_OF_MONTH)
             val hour = convertToDoubleDigit(calendar.get(Calendar.HOUR_OF_DAY).toString())
             val minute = convertToDoubleDigit(calendar.get(Calendar.MINUTE).toString())
