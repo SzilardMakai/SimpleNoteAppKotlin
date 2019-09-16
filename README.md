@@ -13,5 +13,5 @@ Master branch
   - Data binding library
   
 RxKotlin
-  Same as master branch except LiveData and Kotlin coroutines has been
+  - Same as master branch except LiveData and Kotlin coroutines has been
   replaced by RxKotlin
