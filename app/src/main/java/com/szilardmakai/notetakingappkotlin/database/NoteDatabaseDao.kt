@@ -15,9 +15,6 @@ interface NoteDatabaseDao {
     @Delete
     fun deleteNote(note: Note)
 
-    @Query("SELECT * FROM notes_table WHERE noteId = :noteId ")
-    fun getNote(noteId: Long): Note
-
     @Query("SELECT * FROM notes_table ORDER BY modified_on DESC ")
     fun getNotes(): DataSource.Factory<Int, Note>
 }

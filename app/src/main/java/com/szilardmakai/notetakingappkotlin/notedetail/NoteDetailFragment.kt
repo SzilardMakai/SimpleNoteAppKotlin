@@ -31,30 +31,32 @@ class NoteDetailFragment : Fragment() {
         binding.viewModel = viewModel
         binding.etAddNoteText.requestFocus()
 
-
-        binding.note = viewModel.loadNote(arguments.noteId)
+        binding.note = arguments.note
 
         binding.btnAddNoteSave.setOnClickListener {
             val note = binding.note
-            if (arguments.noteId != 0L) {
-                note?.content = binding.etAddNoteText.text.toString()
-                note?.modificationTime = System.currentTimeMillis()
-                viewModel.updateNote(note!!)
+            if (note!!.noteId != 0L) {
+                note.content = binding.etAddNoteText.text.toString()
+                note.modificationTime = System.currentTimeMillis()
+                viewModel.updateNote(note)
             } else {
                 val newNote = Note()
                 newNote.content = binding.etAddNoteText.text.toString()
                 viewModel.addNote(newNote)
             }
-            findNavController().navigate(NoteDetailFragmentDirections.actionNoteDetailFragmentToNoteListFragment())
-            binding.etAddNoteText.clearFocus()
+           navigateBackToListFragment(binding)
         }
 
         binding.btnAddNoteCancel.setOnClickListener {
-            findNavController().navigate(NoteDetailFragmentDirections.actionNoteDetailFragmentToNoteListFragment())
-            binding.etAddNoteText.clearFocus()
+            navigateBackToListFragment(binding)
         }
         binding.lifecycleOwner = this
 
         return binding.root
+    }
+
+    private fun navigateBackToListFragment(binding: NoteDetailFragmentBinding) {
+        findNavController().navigate(NoteDetailFragmentDirections.actionNoteDetailFragmentToNoteListFragment())
+        binding.etAddNoteText.clearFocus()
     }
 }

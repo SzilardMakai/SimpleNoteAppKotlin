@@ -1,20 +1,21 @@
 package com.szilardmakai.notetakingappkotlin.repository
 
-import androidx.lifecycle.LiveData
-import androidx.paging.LivePagedListBuilder
 import androidx.paging.PagedList
+import androidx.paging.RxPagedListBuilder
 import com.szilardmakai.notetakingappkotlin.database.Note
 import com.szilardmakai.notetakingappkotlin.database.NoteDatabase
 import com.szilardmakai.notetakingappkotlin.database.NoteDatabaseDao
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.withContext
+import io.reactivex.Completable
+import io.reactivex.Observable
+import io.reactivex.android.schedulers.AndroidSchedulers
+import io.reactivex.schedulers.Schedulers
 
 const val PAGE_INITIAL_LOAD_SIZE: Int = 20
 const val PAGE_SIZE: Int = 10
 
 class NoteRepository(private val database: NoteDatabase) {
 
-    val noteList: LiveData<PagedList<Note>>
+    val noteList: Observable<PagedList<Note>>
 
     init {
         val noteDatabaseDao: NoteDatabaseDao = database.noteDatabaseDao
@@ -23,31 +24,30 @@ class NoteRepository(private val database: NoteDatabase) {
             .setInitialLoadSizeHint(PAGE_INITIAL_LOAD_SIZE)
             .setPageSize(PAGE_SIZE)
             .build())
-        noteList = LivePagedListBuilder<Int, Note>(noteDatabaseDao.getNotes(), pagedListConfig)
-            .build()
+        noteList = RxPagedListBuilder<Int, Note>(
+            noteDatabaseDao.getNotes(),
+            pagedListConfig
+        ).buildObservable()
     }
 
-    suspend fun addNote(note: Note) {
-        withContext(Dispatchers.IO) {
-            database.noteDatabaseDao.addNote(note)
-        }
+    fun addNote(note: Note) {
+        Completable.fromAction { database.noteDatabaseDao.addNote(note) }
+            .observeOn(AndroidSchedulers.mainThread())
+            .subscribeOn(Schedulers.io())
+            .subscribe()
     }
 
-    suspend fun getNote(noteId: Long): Note {
-        return withContext(Dispatchers.IO) {
-            database.noteDatabaseDao.getNote(noteId)
-        }
+    fun updateNote(note: Note) {
+        Completable.fromAction { database.noteDatabaseDao.updateNote(note) }
+            .observeOn(AndroidSchedulers.mainThread())
+            .subscribeOn(Schedulers.io())
+            .subscribe()
     }
 
-    suspend fun updateNote(note: Note) {
-        withContext(Dispatchers.IO) {
-            database.noteDatabaseDao.updateNote(note)
-        }
-    }
-
-    suspend fun deleteNote(note: Note) {
-        withContext(Dispatchers.IO) {
-            database.noteDatabaseDao.deleteNote(note)
-        }
+    fun deleteNote(note: Note) {
+        Completable.fromAction { database.noteDatabaseDao.deleteNote(note) }
+            .observeOn(AndroidSchedulers.mainThread())
+            .subscribeOn(Schedulers.io())
+            .subscribe()
     }
 }
